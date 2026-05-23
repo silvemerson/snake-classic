@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🐍 Snake</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0d0d0d;
+      color: #e0e0e0;
+      font-family: 'Courier New', Courier, monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      letter-spacing: 0.15em;
+      color: #1D9E75;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 0.75rem;
+      color: #555;
+      letter-spacing: 0.1em;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .scoreboard {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .score-block { text-align: center; }
+    .score-label { font-size: 0.65rem; color: #555; letter-spacing: 0.15em; }
+    .score-value { font-size: 1.6rem; font-weight: bold; color: #1D9E75; min-width: 3ch; }
+
+    /* game area */
+    .game-wrap {
+      position: relative;
+      display: inline-block;
+      border: 1px solid #1D9E75;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 0 30px rgba(29,158,117,0.15);
+    }
+
+    canvas { display: block; }
+
+    /* overlay */
+    #overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.82);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    #overlay-title {
+      font-size: 1.6rem;
+      color: #1D9E75;
+      letter-spacing: 0.1em;
+    }
+
+    #overlay-msg {
+      font-size: 0.8rem;
+      color: #888;
+    }
+
+    #start-btn {
+      margin-top: 0.5rem;
+      background: #1D9E75;
+      color: #fff;
+      border: none;
+      padding: 0.6rem 2rem;
+      font-size: 0.9rem;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 0.08em;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    #start-btn:hover { background: #0F6E56; }
+
+    /* controls bar */
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .hint { font-size: 0.7rem; color: #555; }
+    kbd {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 3px;
+      padding: 1px 5px;
+      font-size: 0.65rem;
+      color: #888;
+      font-family: 'Courier New', monospace;
+    }
+
+    .speed-wrap { display: flex; align-items: center; gap: 0.5rem; }
+    .speed-wrap label { font-size: 0.7rem; color: #555; }
+    select {
+      background: #1a1a1a;
+      color: #ccc;
+      border: 1px solid #333;
+      border-radius: 3px;
+      padding: 3px 6px;
+      font-size: 0.7rem;
+      font-family: 'Courier New', monospace;
+      cursor: pointer;
+    }
+
+    /* d-pad (mobile) */
+    .dpad {
+      display: grid;
+      grid-template-areas: ". up ." "left . right" ". down .";
+      gap: 4px;
+      margin-top: 1rem;
+    }
+    .dpad button {
+      width: 44px; height: 44px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #888;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .dpad button:active { background: #1D9E75; color: #fff; }
+    #btn-up    { grid-area: up; }
+    #btn-down  { grid-area: down; }
+    #btn-left  { grid-area: left; }
+    #btn-right { grid-area: right; }
+
+    @media (hover: hover) { .dpad { display: none; } }
+  </style>
+</head>
+<body>
+
+  <h1>🐍 SNAKE</h1>
+  <p class="subtitle">PYTHON + FLASK + HTML5 CANVAS</p>
+
+  <div class="scoreboard">
+    <div class="score-block">
+      <div class="score-label">SCORE</div>
+      <div class="score-value" id="score">0</div>
+    </div>
+    <div class="score-block">
+      <div class="score-label">RECORDE</div>
+      <div class="score-value" id="hiscore">0</div>
+    </div>
+  </div>
+
+  <div class="game-wrap">
+    <canvas id="canvas" width="400" height="400"></canvas>
+
+    <div id="overlay">
+      <div id="overlay-title">🐍 SNAKE</div>
+      <div id="overlay-msg">Use as setas ou WASD para mover</div>
+      <button id="start-btn">▶ JOGAR</button>
+    </div>
+  </div>
+
+  <div class="controls">
+    <span class="hint"><kbd>↑↓←→</kbd> ou <kbd>WASD</kbd> mover</span>
+    <span class="hint"><kbd>P</kbd> pausar</span>
+    <div class="speed-wrap">
+      <label>Velocidade:</label>
+      <select id="speed">
+        <option value="180">🐢 Devagar</option>
+        <option value="100" selected>🐍 Normal</option>
+        <option value="55">⚡ Rápido</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- d-pad para toque -->
+  <div class="dpad">
+    <button id="btn-up">↑</button>
+    <button id="btn-left">←</button>
+    <button id="btn-down">↓</button>
+    <button id="btn-right">→</button>
+  </div>
+
+  <script src="{{ url_for('static', filename='snake.js') }}"></script>
+</body>
+</html>
