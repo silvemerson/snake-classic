@@ -1,0 +1,12 @@
+services:
+  snake:
+    build: .
+    container_name: docker-snake
+    ports:
+      - "8600:8080"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
