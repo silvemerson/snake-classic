@@ -152,6 +152,122 @@
     #btn-right { grid-area: right; }
 
     @media (hover: hover) { .dpad { display: none; } }
+
+    /* ranking modal */
+    #ranking-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    #ranking-modal.open { display: flex; }
+
+    .ranking-box {
+      background: #111;
+      border: 1px solid #1D9E75;
+      border-radius: 6px;
+      padding: 1.5rem 2rem;
+      min-width: 280px;
+      max-width: 360px;
+      width: 90%;
+      box-shadow: 0 0 40px rgba(29,158,117,0.2);
+    }
+
+    .ranking-box h2 {
+      color: #1D9E75;
+      font-size: 1.1rem;
+      letter-spacing: 0.15em;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .ranking-table { width: 100%; border-collapse: collapse; }
+    .ranking-table th {
+      font-size: 0.6rem;
+      color: #555;
+      letter-spacing: 0.12em;
+      padding: 0 0 0.4rem;
+      text-align: left;
+    }
+    .ranking-table th:last-child { text-align: right; }
+    .ranking-table td {
+      font-size: 0.8rem;
+      color: #ccc;
+      padding: 0.3rem 0;
+      border-top: 1px solid #1a1a1a;
+    }
+    .ranking-table td:first-child { color: #555; width: 2ch; padding-right: 0.6rem; }
+    .ranking-table td:last-child  { text-align: right; color: #1D9E75; font-weight: bold; }
+    .ranking-table tr.highlight td { color: #fff; }
+    .ranking-table tr.highlight td:last-child { color: #F0997B; }
+
+    .ranking-empty { text-align: center; color: #444; font-size: 0.75rem; padding: 1rem 0; }
+
+    .ranking-close {
+      display: block;
+      width: 100%;
+      margin-top: 1.2rem;
+      background: transparent;
+      border: 1px solid #333;
+      color: #888;
+      padding: 0.5rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .ranking-close:hover { border-color: #1D9E75; color: #1D9E75; }
+
+    /* name input on game over */
+    #name-form {
+      display: flex;
+      gap: 0.4rem;
+      margin-top: 0.25rem;
+    }
+    #player-name {
+      flex: 1;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: #e0e0e0;
+      padding: 0.4rem 0.6rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      border-radius: 4px;
+      outline: none;
+      min-width: 0;
+    }
+    #player-name:focus { border-color: #1D9E75; }
+    #save-btn {
+      background: #1D9E75;
+      color: #fff;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    #save-btn:hover { background: #0F6E56; }
+
+    .ranking-btn-wrap { margin-top: 1rem; }
+    #ranking-btn {
+      background: transparent;
+      border: 1px solid #333;
+      color: #555;
+      padding: 0.4rem 1.2rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    #ranking-btn:hover { border-color: #1D9E75; color: #1D9E75; }
   </style>
 </head>
 <body>
@@ -176,6 +292,10 @@
     <div id="overlay">
       <div id="overlay-title">🐍 SNAKE</div>
       <div id="overlay-msg">Use as setas ou WASD para mover</div>
+      <div id="name-form" style="display:none">
+        <input id="player-name" maxlength="20" placeholder="Seu nome" autocomplete="off" />
+        <button id="save-btn">Salvar</button>
+      </div>
       <button id="start-btn">▶ JOGAR</button>
     </div>
   </div>
@@ -190,6 +310,19 @@
         <option value="100" selected>🐍 Normal</option>
         <option value="55">⚡ Rápido</option>
       </select>
+    </div>
+  </div>
+
+  <div class="ranking-btn-wrap">
+    <button id="ranking-btn">🏆 VER RANKING</button>
+  </div>
+
+  <!-- modal de ranking -->
+  <div id="ranking-modal">
+    <div class="ranking-box">
+      <h2>🏆 RANKING</h2>
+      <div id="ranking-content"></div>
+      <button class="ranking-close" id="ranking-close">Fechar</button>
     </div>
   </div>
 
