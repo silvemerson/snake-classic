@@ -7,6 +7,13 @@ const overlayTitle = document.getElementById("overlay-title");
 const overlayMsg = document.getElementById("overlay-msg");
 const startBtn = document.getElementById("start-btn");
 const speedSel = document.getElementById("speed");
+const nameForm = document.getElementById("name-form");
+const playerNameInput = document.getElementById("player-name");
+const saveBtn = document.getElementById("save-btn");
+const rankingModal = document.getElementById("ranking-modal");
+const rankingContent = document.getElementById("ranking-content");
+const rankingBtn = document.getElementById("ranking-btn");
+const rankingClose = document.getElementById("ranking-close");
 
 const COLS = 20, ROWS = 20;
 const CW = canvas.width / COLS;
@@ -119,17 +126,44 @@ function step() {
   draw();
 }
 
+async function loadRanking(highlightScore) {
+  const res = await fetch("/scores");
+  const data = await res.json();
+  if (data.length === 0) {
+    rankingContent.innerHTML = '<p class="ranking-empty">Nenhuma pontuação ainda.</p>';
+    return;
+  }
+  const rows = data.map((s, i) => {
+    const hl = highlightScore !== undefined && s.score === highlightScore ? ' class="highlight"' : '';
+    return `<tr${hl}><td>${i + 1}</td><td>${s.name}</td><td>${s.score}</td></tr>`;
+  }).join("");
+  rankingContent.innerHTML = `
+    <table class="ranking-table">
+      <thead><tr><th>#</th><th>NOME</th><th style="text-align:right">SCORE</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function openRanking(highlightScore) {
+  rankingModal.classList.add("open");
+  loadRanking(highlightScore);
+}
+
 function gameOver() {
   clearInterval(loop);
   running = false;
   overlayTitle.textContent = "💀 FIM DE JOGO";
   overlayMsg.textContent = `Score: ${score}  |  Recorde: ${hiScore}`;
+  nameForm.style.display = score > 0 ? "flex" : "none";
+  playerNameInput.value = "";
   startBtn.textContent = "↺ JOGAR DE NOVO";
   overlay.style.display = "flex";
+  if (score > 0) setTimeout(() => playerNameInput.focus(), 50);
 }
 
 function startGame() {
   overlay.style.display = "none";
+  nameForm.style.display = "none";
   initGame();
   running = true;
   paused = false;
@@ -137,6 +171,15 @@ function startGame() {
   clearInterval(loop);
   loop = setInterval(step, speed);
   draw();
+}
+
+async function saveScore() {
+  const name = playerNameInput.value.trim() || "Anônimo";
+  saveBtn.disabled = true;
+  await fetch(`/scores/${encodeURIComponent(name)}/${score}`, { method: "POST" });
+  nameForm.style.display = "none";
+  overlay.style.display = "none";
+  openRanking(score);
 }
 
 // ── input ─────────────────────────────────────────────────────────────────────
@@ -167,6 +210,11 @@ document.getElementById("btn-left").addEventListener("click",  () => { if(!(dir.
 document.getElementById("btn-right").addEventListener("click", () => { if(!(dir.x === -1)) nextDir={x:1,y:0};  });
 
 startBtn.addEventListener("click", startGame);
+saveBtn.addEventListener("click", saveScore);
+playerNameInput.addEventListener("keydown", e => { if (e.key === "Enter") saveScore(); });
+rankingBtn.addEventListener("click", () => openRanking());
+rankingClose.addEventListener("click", () => rankingModal.classList.remove("open"));
+rankingModal.addEventListener("click", e => { if (e.target === rankingModal) rankingModal.classList.remove("open"); });
 
 // draw static board on load
 drawBg();
