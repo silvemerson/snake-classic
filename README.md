@@ -1,6 +1,8 @@
-# 🐍 docker-snake
+# 🐍 Snake Classic
 
-Snake clássico em HTML5 Canvas, servido por Flask, containerizado com Docker.
+![snake](assets/snake.png)
+
+Snake clássico em HTML5 Canvas, servido por Flask e containerizado.
 ---
 
 ## Rodar com Docker Compose (recomendado)
