@@ -2,18 +2,11 @@
 
 ![snake](assets/snake.png)
 
+
 Snake clássico em HTML5 Canvas, servido por Flask e containerizado.
----
-
-## Rodar com Docker Compose (recomendado)
-
-```bash
-docker compose up -d
-```
-
-Acesse: http://localhost:8600
 
 ---
+
 
 ## Rodar sem Docker (desenvolvimento)
 
@@ -25,7 +18,20 @@ python main.py
 
 Acesse: http://localhost:8080
 
+
 ---
+
+## Rodar com Docker Compose
+
+```bash
+docker compose up -d
+```
+
+Acesse: http://localhost:8600
+
+---
+
+
 
 ## Controles
 
