@@ -85,8 +85,8 @@ docker compose down
 
 ## Ideias para expandir - Vou fazer depois
 
-- Persistir placar em SQLite com `flask-sqlalchemy`
-- Adicionar tela de ranking com nomes
+- ✅ Persistir placar em SQLite com `flask-sqlalchemy`
+- ✅ Adicionar tela de ranking com nomes
 - Modo multiplayer com WebSockets (`flask-socketio`)
 - Temas de cor diferentes
 - Power-ups no mapa
