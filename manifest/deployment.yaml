@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docker-snake
+  labels:
+    app: docker-snake
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: docker-snake
+  template:
+    metadata:
+      labels:
+        app: docker-snake
+    spec:
+      containers:
+        - name: docker-snake
+          image: silvemerson/docker-snake:latest
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
