@@ -1,24 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: docker-snake
+  name: snake-classic
   labels:
-    app: docker-snake
+    app: snake-classic
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: docker-snake
+      app: snake-classic
   template:
     metadata:
       labels:
-        app: docker-snake
+        app: snake-classic
     spec:
       containers:
-        - name: docker-snake
-          image: silvemerson/docker-snake:latest
+        - name: snake-classic
+          image: silvemerson/snake-classic:latest
           ports:
             - containerPort: 8080
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
           livenessProbe:
             httpGet:
               path: /health

@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: docker-snake
+  name: snake-classic
   labels:
-    app: docker-snake
+    app: snake-classic
 spec:
   selector:
-    app: docker-snake
+    app: snake-classic
   ports:
     - protocol: TCP
       port: 80
